@@ -1,14 +1,15 @@
-from eliasc_pkg import a
-from eliasc_pkg import b
+import asyncio
+
+from eliasc_pkg.a.default_extension import MyDefaultExtension
+from symphony.bdk.core.config.loader import BdkConfigLoader
 from symphony.bdk.core.symphony_bdk import SymphonyBdk
-from symphony.bdk.extension import ExtensionService
 
-if __name__ == '__main__':
-    a.a_function()
-    b.b_function()
 
-    service = ExtensionService()
-    service.register(ValueError())
-    print(service._extensions)
+async def run():
+    async with SymphonyBdk(BdkConfigLoader.load_from_symphony_dir("config.yaml")) as bdk:
+        service = bdk.extensions().get_service(MyDefaultExtension)
+        session_token_ = await service.get_session_token()
+        print("Session token: " + session_token_)
 
-    SymphonyBdk()
+
+asyncio.run(run())
